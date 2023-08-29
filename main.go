@@ -10,7 +10,7 @@ func main() {
 	var inputProgram int
 	fmt.Println("Pilih program dan tekan enter: ")
 	fmt.Println("1. Program WeightedStrings")
-	fmt.Println("2. Program Not Ready")
+	fmt.Println("2. Program HighestPalindrome")
 	fmt.Println("3. Pogram BalancedBracket ")
 	fmt.Scan(&inputProgram)
 
@@ -18,6 +18,9 @@ func main() {
 	case 1:
 		fmt.Println("\nProgram WeightedStrings dipilih.")
 		fmt.Println(WeightedStrings())
+	case 2:
+		fmt.Println("\nProgram HighestPalindrome dipilih.")
+		fmt.Println(HighestPalindrome())
 	case 3:
 		fmt.Println("\nProgram BalancedBracket dipilih.")
 		fmt.Println(BalancedBracket())
@@ -72,6 +75,8 @@ func WeightedStrings() (res []string) {
 
 	return
 }
+
+// Nomor 3 
 
 type bracket string
 
@@ -152,4 +157,70 @@ func BalancedBracket() string {
 	}
 
 	return "YES"
+}
+
+// Nomor 2
+
+func GetHigher(val1, val2 int) int {
+	if val1 > val2 {
+		return val1
+	}
+	return val2
+}
+
+func UpdateRes(res, newStr []string) string {
+	length := len(res)
+	r := []string{}
+	
+	r = append(r, res[:length/2]...)
+	r = append(r, newStr...)
+	r = append(r, res[length/2:]...)
+	return strings.Join(r, "")
+}
+
+func isPalindrome(res *string, str []string, changeRemaining *int) bool {
+	length := len(str)
+
+	if length == 0 {
+		return true
+	}
+
+	if length == 1 {
+		return false
+	} 
+
+	if str[0] != str[length-1]  {
+		if *changeRemaining == 0 {
+			return false
+		}
+
+		*changeRemaining -= 1
+
+		val1, _ := strconv.Atoi(string(str[0]))
+		val2, _ := strconv.Atoi(string(str[length-1]))
+
+		higher := GetHigher(val1, val2)
+
+		str[0] = fmt.Sprint(higher)
+		str[length-1] = fmt.Sprint(higher)
+
+	}
+	
+	*res = UpdateRes(strings.Split(*res, ""), []string{str[0], str[length-1]})
+
+	return isPalindrome(res, str[1:length-1], changeRemaining)
+}
+
+func HighestPalindrome() (res string) {
+	var str string
+	var k int
+	fmt.Println("\nInput string :")
+	fmt.Scan(&str)
+	fmt.Println("\nInput changeRemaining(int) :")
+	fmt.Scan(&k)
+	val := isPalindrome(&res, strings.Split(str, ""), &k)
+	if (!val) {
+		res = "-1"
+	}
+	return
 }
